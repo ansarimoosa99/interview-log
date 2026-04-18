@@ -3,7 +3,10 @@ package com.moosa.interviewlog.service;
 
 import org.springframework.stereotype.Service;
 import com.moosa.interviewlog.entity.Company;
+import com.moosa.interviewlog.entity.User;
 import com.moosa.interviewlog.repository.CompanyRepository;
+import com.moosa.interviewlog.repository.UserRepository;
+import com.moosa.interviewlog.security.SecurityUtil;
 
 import java.util.List;
 
@@ -11,9 +14,12 @@ import java.util.List;
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
 
-    public CompanyService(CompanyRepository companyRepository) {
+
+    public CompanyService(CompanyRepository companyRepository, UserRepository userRepository) {
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Company> getAllCompanies() {
@@ -21,6 +27,12 @@ public class CompanyService {
     }
 
     public Company createCompany(Company company) {
+        String email = SecurityUtil.getCurrentUserEmail();
+
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        company.setUser(user);
         return companyRepository.save(company);
     }
 
