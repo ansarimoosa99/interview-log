@@ -23,4 +23,20 @@ public class CompanyService {
     public Company createCompany(Company company) {
         return companyRepository.save(company);
     }
+
+    public Company updateCompany(Long id, Company updatedCompany) {
+        Company existing = companyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+
+        existing.setName(updatedCompany.getName());
+        existing.setRole(updatedCompany.getRole());
+        existing.setStatus(updatedCompany.getStatus());
+        existing.setNotes(updatedCompany.getNotes());
+
+        return companyRepository.save(existing);
+    }
+
+    public void deleteCompany(Long id) {
+        companyRepository.deleteById(id);
+    }
 }
