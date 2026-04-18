@@ -23,7 +23,12 @@ public class CompanyService {
     }
 
     public List<Company> getAllCompanies() {
-        return companyRepository.findAll();
+        String email = SecurityUtil.getCurrentUserEmail();
+
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return companyRepository.findByUserId(user.getId());
     }
 
     public Company createCompany(Company company) {
